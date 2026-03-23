@@ -7,6 +7,7 @@ import vehicleRoutes from "./routes/vehicle.routes";
 import serviceRoutes from "./routes/service.routes";
 import fuelRoutes from "./routes/fuel.routes";
 import uploadRoutes from "./routes/upload.routes";
+import invoiceRoutes from "./routes/invoice.routes";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -19,6 +20,7 @@ app.use("/api/vehicles", vehicleRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/fuel", fuelRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/invoice", invoiceRoutes);
 
 app.get("/", (req, res) => {
   res.send("Vehicle Care API running 🚀");
