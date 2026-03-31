@@ -1,0 +1,24 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography"; /* Add this line right here! */
+
+/* Your other custom CSS below... */
+@theme {
+  /* ... */
+}
+
+:root {
+  --primary: rgb(108 105 239);
+  --primary-light: rgb(129 127 252);
+  --text: #111111;
+  --dark-bg: #2f2f2f;
+  --white: #ffffff;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
