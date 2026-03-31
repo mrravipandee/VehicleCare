@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  USER
+  GARAGE
+  ADMIN
+}
+
+enum FuelType {
+  PETROL
+  DIESEL
+  ELECTRIC
+}
+
+enum DocumentType {
+  RC
+  INSURANCE
+  BILL
+}
+
+enum NotificationType {
+  SERVICE_REMINDER
+  ALERT
+}
+
+enum ReminderType {
+  SERVICE
+  INSURANCE
+  PUC
+}
+
+enum ReminderStatus {
+  PENDING
+  SENT
+}
+
+model User {
+  id            String         @id @default(uuid()) @db.Uuid
+  phone_number  String         @unique @db.VarChar(20)
+  name          String?        @db.VarChar(255)
+  email         String?        @db.VarChar(255)
+  role          UserRole       @default(USER)
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  vehicles      Vehicle[]
+  notifications Notification[]
+}
+
+model Vehicle {
+  id                String            @id @default(uuid()) @db.Uuid
+  user_id           String            @db.Uuid
+  vehicle_number    String            @db.VarChar(50)
+  brand             String            @db.VarChar(100)
+  model             String            @db.VarChar(100)
+  fuel_type         FuelType
+  purchase_date     DateTime?         @db.Date
+  current_km        Int
+  created_at        DateTime          @default(now())
+  user              User              @relation(fields: [user_id], references: [id])
+  service_records   ServiceRecord[]
+  fuel_logs         FuelLog[]
+  documents         Document[]
+  service_reminders ServiceReminder[]
+}
+
+model ServiceRecord {
+  id              String     @id @default(uuid()) @db.Uuid
+  vehicle_id      String     @db.Uuid
+  service_type    String     @db.VarChar(100)
+  garage_name     String     @db.VarChar(255)
+  cost            Decimal    @db.Decimal(10, 2)
+  service_date    DateTime   @db.Date
+  next_service_km Int?
+  service_km Int?
+  notes           String?    @db.Text
+  created_at      DateTime   @default(now())
+  vehicle         Vehicle    @relation(fields: [vehicle_id], references: [id])
+  invoices        Invoice[]
+}
+
+model FuelLog {
+  id          String   @id @default(uuid()) @db.Uuid
+  vehicle_id  String   @db.Uuid
+  fuel_amount Decimal  @db.Decimal(10, 2)
+  fuel_cost   Decimal  @db.Decimal(10, 2)
+  km_reading  Int
+  fuel_date   DateTime @db.Date
+  vehicle     Vehicle  @relation(fields: [vehicle_id], references: [id])
+}
+
+model Document {
+  id            String       @id @default(uuid()) @db.Uuid
+  vehicle_id    String       @db.Uuid
+  file_url      String       @db.VarChar(500)
+  document_type DocumentType
+  uploaded_at   DateTime     @default(now())
+  vehicle       Vehicle      @relation(fields: [vehicle_id], references: [id])
+}
+
+model Invoice {
+  id              String        @id @default(uuid()) @db.Uuid
+  service_id      String        @db.Uuid
+  invoice_number  String        @db.VarChar(100)
+  total_cost      Decimal       @db.Decimal(10, 2)
+  invoice_pdf_url String?       @db.VarChar(500)
+  created_at      DateTime      @default(now())
+  service         ServiceRecord @relation(fields: [service_id], references: [id])
+}
+
+model Notification {
+  id         String           @id @default(uuid()) @db.Uuid
+  user_id    String           @db.Uuid
+  title      String           @db.VarChar(255)
+  message    String           @db.Text
+  type       NotificationType
+  is_read    Boolean          @default(false)
+  created_at DateTime         @default(now())
+  user       User             @relation(fields: [user_id], references: [id])
+}
+
+model ServiceReminder {
+  id            String         @id @default(uuid()) @db.Uuid
+  vehicle_id    String         @db.Uuid
+  reminder_type ReminderType
+  reminder_date DateTime       @db.Date
+  status        ReminderStatus @default(PENDING)
+  vehicle       Vehicle        @relation(fields: [vehicle_id], references: [id])
+}
