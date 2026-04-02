@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import `in`.thevehiclecare.ui.components.NameTextField
 import `in`.thevehiclecare.ui.components.EmailTextField
 import `in`.thevehiclecare.ui.components.PhoneTextField
@@ -41,6 +41,8 @@ import `in`.thevehiclecare.ui.theme.Primary
 import `in`.thevehiclecare.ui.theme.TextColor
 import `in`.thevehiclecare.ui.theme.DarkBg
 import `in`.thevehiclecare.ui.theme.LightBg
+import `in`.thevehiclecare.ui.theme.DarkSurface
+import `in`.thevehiclecare.ui.theme.TextDark
 import `in`.thevehiclecare.viewmodel.AuthViewModel
 import androidx.compose.material3.MaterialTheme
 
@@ -53,7 +55,6 @@ fun RegisterScreen(
     val isDarkTheme = isSystemInDarkTheme()
     val backgroundColor = if (isDarkTheme) DarkBg else Color.White
     val scrollState = rememberScrollState()
-    val scope = rememberCoroutineScope()
 
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -72,89 +73,100 @@ fun RegisterScreen(
                 .verticalScroll(scrollState)
                 .padding(horizontal = 24.dp)
         ) {
-            // Header
+            // Header with back button
             Box(
                 modifier = Modifier
-                    .padding(top = 16.dp)
+                    .padding(top = 16.dp, bottom = 8.dp)
                     .align(Alignment.Start)
             ) {
-                IconButton(onClick = onNavigateBack) {
+                IconButton(
+                    onClick = onNavigateBack,
+                    modifier = Modifier
+                        .background(
+                            color = if (isDarkTheme) DarkSurface else LightBg,
+                            shape = androidx.compose.foundation.shape.RoundedCornerShape(10.dp)
+                        )
+                        .padding(4.dp)
+                ) {
                     Icon(
-                        imageVector = Icons.Default.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = "Back",
-                        tint = TextColor
+                        tint = if (isDarkTheme) TextDark else TextColor,
+                        modifier = Modifier.padding(4.dp)
                     )
                 }
             }
 
-            // Title
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Title Section
             Text(
                 text = "Create Account",
                 fontSize = 32.sp,
                 fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-                color = TextColor,
+                color = if (isDarkTheme) TextDark else TextColor,
                 modifier = Modifier.padding(top = 8.dp)
             )
 
             Text(
-                text = "Join us and start your journey",
+                text = "Join us and start managing your vehicle care",
                 fontSize = 14.sp,
-                color = androidx.compose.ui.graphics.Color.Gray,
-                modifier = Modifier.padding(top = 8.dp, bottom = 32.dp)
+                color = if (isDarkTheme) TextDark.copy(alpha = 0.6f) else TextColor.copy(alpha = 0.6f),
+                modifier = Modifier.padding(top = 8.dp, bottom = 28.dp)
             )
 
             // Error Message
             if (uiState.error.isNotEmpty()) {
                 ErrorMessage(uiState.error)
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(20.dp))
             }
 
-            // Name Input
+            // Full Name Input
             Text(
                 text = "Full Name",
                 fontSize = 14.sp,
                 fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
-                color = TextColor,
-                modifier = Modifier.padding(bottom = 8.dp)
+                color = if (isDarkTheme) TextDark else TextColor,
+                modifier = Modifier.padding(bottom = 10.dp)
             )
             NameTextField(
                 value = name,
                 onValueChange = { name = it },
                 placeholder = "Enter your full name"
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             // Email Input
             Text(
                 text = "Email Address",
                 fontSize = 14.sp,
                 fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
-                color = TextColor,
-                modifier = Modifier.padding(bottom = 8.dp)
+                color = if (isDarkTheme) TextDark else TextColor,
+                modifier = Modifier.padding(bottom = 10.dp)
             )
             EmailTextField(
                 value = email,
                 onValueChange = { email = it },
                 placeholder = "your@email.com"
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             // Phone Number Input
             Text(
                 text = "Phone Number",
                 fontSize = 14.sp,
                 fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
-                color = TextColor,
-                modifier = Modifier.padding(bottom = 8.dp)
+                color = if (isDarkTheme) TextDark else TextColor,
+                modifier = Modifier.padding(bottom = 10.dp)
             )
             PhoneTextField(
                 value = phoneNumber,
                 onValueChange = { phoneNumber = it },
                 placeholder = "+91 your number"
             )
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(28.dp))
 
-            // Register Button
+            // Create Account Button
             PrimaryButton(
                 text = "Create Account",
                 onClick = {
@@ -163,22 +175,39 @@ fun RegisterScreen(
                         name = name,
                         email = email
                     )
+                    // Navigate to login after successful registration
+                    if (uiState.success) {
+                        onNavigateToLogin()
+                    }
                 },
                 isLoading = uiState.isLoading,
                 enabled = name.isNotEmpty() && email.isNotEmpty() && phoneNumber.length > 3
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // Terms Text
+            Text(
+                text = "By creating an account, you agree to our Terms of Service and Privacy Policy",
+                fontSize = 11.sp,
+                color = if (isDarkTheme) TextDark.copy(alpha = 0.5f) else TextColor.copy(alpha = 0.5f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
 
             // Divider
             DividerWithText("Or register with")
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             // Google Sign In
             GoogleSignInButton(onClick = { /* Handle Google Sign In */ })
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
             // Facebook Sign In
             FacebookSignInButton(onClick = { /* Handle Facebook Sign In */ })

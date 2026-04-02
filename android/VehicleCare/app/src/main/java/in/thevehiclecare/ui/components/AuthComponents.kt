@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -46,6 +48,13 @@ import `in`.thevehiclecare.ui.theme.TextColor
 import `in`.thevehiclecare.ui.theme.DarkBg
 import `in`.thevehiclecare.ui.theme.TextDark
 import `in`.thevehiclecare.ui.theme.LightBg
+import `in`.thevehiclecare.ui.theme.DarkSurface
+import `in`.thevehiclecare.ui.theme.BorderDark
+import `in`.thevehiclecare.ui.theme.BorderLight
+import `in`.thevehiclecare.ui.theme.SuccessGreen
+import `in`.thevehiclecare.ui.theme.SuccessGreenDark
+import `in`.thevehiclecare.ui.theme.ErrorRed
+import `in`.thevehiclecare.ui.theme.ErrorRedDark
 
 @Composable
 fun PrimaryButton(
@@ -55,6 +64,7 @@ fun PrimaryButton(
     isLoading: Boolean = false,
     enabled: Boolean = true
 ) {
+    val isDarkTheme = isSystemInDarkTheme()
     Button(
         onClick = onClick,
         modifier = modifier
@@ -63,14 +73,18 @@ fun PrimaryButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = Primary,
             contentColor = androidx.compose.ui.graphics.Color.White,
-            disabledContainerColor = PrimaryLight.copy(alpha = 0.5f)
+            disabledContainerColor = if (isDarkTheme) Primary.copy(alpha = 0.3f) else PrimaryLight.copy(alpha = 0.5f)
         ),
-        shape = RoundedCornerShape(12.dp),
-        enabled = enabled && !isLoading
+        shape = RoundedCornerShape(14.dp),
+        enabled = enabled && !isLoading,
+        elevation = ButtonDefaults.elevatedButtonElevation(
+            defaultElevation = 4.dp,
+            pressedElevation = 8.dp
+        )
     ) {
         if (isLoading) {
             androidx.compose.material3.CircularProgressIndicator(
-                modifier = Modifier.height(24.dp),
+                modifier = Modifier.height(20.dp),
                 color = androidx.compose.ui.graphics.Color.White,
                 strokeWidth = 2.dp
             )
@@ -78,7 +92,8 @@ fun PrimaryButton(
             Text(
                 text = text,
                 fontSize = 16.sp,
-                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                letterSpacing = 0.5.sp
             )
         }
     }
@@ -90,16 +105,17 @@ fun SecondaryButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isDarkTheme = isSystemInDarkTheme()
     Button(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = LightBg,
+            containerColor = if (isDarkTheme) DarkSurface else LightBg,
             contentColor = Primary
         ),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(14.dp),
         border = androidx.compose.foundation.BorderStroke(2.dp, Primary)
     ) {
         Text(
@@ -117,13 +133,14 @@ fun EmailTextField(
     modifier: Modifier = Modifier,
     placeholder: String = "Email Address"
 ) {
+    val isDarkTheme = isSystemInDarkTheme()
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp),
-        placeholder = { Text(placeholder) },
+        placeholder = { Text(placeholder, color = if (isDarkTheme) TextDark.copy(alpha = 0.5f) else TextColor.copy(alpha = 0.5f)) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Email,
@@ -132,14 +149,14 @@ fun EmailTextField(
             )
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(14.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = LightBg,
-            unfocusedContainerColor = LightBg,
+            focusedContainerColor = if (isDarkTheme) DarkSurface else LightBg,
+            unfocusedContainerColor = if (isDarkTheme) DarkSurface else LightBg,
             focusedBorderColor = Primary,
-            unfocusedBorderColor = androidx.compose.ui.graphics.Color.LightGray,
-            focusedTextColor = TextColor,
-            unfocusedTextColor = TextColor
+            unfocusedBorderColor = if (isDarkTheme) BorderDark else BorderLight,
+            focusedTextColor = if (isDarkTheme) TextDark else TextColor,
+            unfocusedTextColor = if (isDarkTheme) TextDark else TextColor
         ),
         singleLine = true
     )
@@ -152,13 +169,14 @@ fun PhoneTextField(
     modifier: Modifier = Modifier,
     placeholder: String = "Phone Number"
 ) {
+    val isDarkTheme = isSystemInDarkTheme()
     OutlinedTextField(
         value = value,
         onValueChange = { if (it.length <= 13) onValueChange(it) },
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp),
-        placeholder = { Text(placeholder) },
+        placeholder = { Text(placeholder, color = if (isDarkTheme) TextDark.copy(alpha = 0.5f) else TextColor.copy(alpha = 0.5f)) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Phone,
@@ -167,14 +185,14 @@ fun PhoneTextField(
             )
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(14.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = LightBg,
-            unfocusedContainerColor = LightBg,
+            focusedContainerColor = if (isDarkTheme) DarkSurface else LightBg,
+            unfocusedContainerColor = if (isDarkTheme) DarkSurface else LightBg,
             focusedBorderColor = Primary,
-            unfocusedBorderColor = androidx.compose.ui.graphics.Color.LightGray,
-            focusedTextColor = TextColor,
-            unfocusedTextColor = TextColor
+            unfocusedBorderColor = if (isDarkTheme) BorderDark else BorderLight,
+            focusedTextColor = if (isDarkTheme) TextDark else TextColor,
+            unfocusedTextColor = if (isDarkTheme) TextDark else TextColor
         ),
         singleLine = true
     )
@@ -187,6 +205,7 @@ fun PasswordTextField(
     modifier: Modifier = Modifier,
     placeholder: String = "Password"
 ) {
+    val isDarkTheme = isSystemInDarkTheme()
     var passwordVisible by remember { mutableStateOf(false) }
 
     OutlinedTextField(
@@ -195,7 +214,7 @@ fun PasswordTextField(
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp),
-        placeholder = { Text(placeholder) },
+        placeholder = { Text(placeholder, color = if (isDarkTheme) TextDark.copy(alpha = 0.5f) else TextColor.copy(alpha = 0.5f)) },
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Lock,
@@ -211,14 +230,14 @@ fun PasswordTextField(
         },
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(14.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = LightBg,
-            unfocusedContainerColor = LightBg,
+            focusedContainerColor = if (isDarkTheme) DarkSurface else LightBg,
+            unfocusedContainerColor = if (isDarkTheme) DarkSurface else LightBg,
             focusedBorderColor = Primary,
-            unfocusedBorderColor = androidx.compose.ui.graphics.Color.LightGray,
-            focusedTextColor = TextColor,
-            unfocusedTextColor = TextColor
+            unfocusedBorderColor = if (isDarkTheme) BorderDark else BorderLight,
+            focusedTextColor = if (isDarkTheme) TextDark else TextColor,
+            unfocusedTextColor = if (isDarkTheme) TextDark else TextColor
         ),
         singleLine = true
     )
@@ -231,22 +250,23 @@ fun NameTextField(
     modifier: Modifier = Modifier,
     placeholder: String = "Full Name"
 ) {
+    val isDarkTheme = isSystemInDarkTheme()
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp),
-        placeholder = { Text(placeholder) },
+        placeholder = { Text(placeholder, color = if (isDarkTheme) TextDark.copy(alpha = 0.5f) else TextColor.copy(alpha = 0.5f)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(14.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = LightBg,
-            unfocusedContainerColor = LightBg,
+            focusedContainerColor = if (isDarkTheme) DarkSurface else LightBg,
+            unfocusedContainerColor = if (isDarkTheme) DarkSurface else LightBg,
             focusedBorderColor = Primary,
-            unfocusedBorderColor = androidx.compose.ui.graphics.Color.LightGray,
-            focusedTextColor = TextColor,
-            unfocusedTextColor = TextColor
+            unfocusedBorderColor = if (isDarkTheme) BorderDark else BorderLight,
+            focusedTextColor = if (isDarkTheme) TextDark else TextColor,
+            unfocusedTextColor = if (isDarkTheme) TextDark else TextColor
         ),
         singleLine = true
     )
@@ -258,22 +278,23 @@ fun OTPTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isDarkTheme = isSystemInDarkTheme()
     OutlinedTextField(
         value = value,
         onValueChange = { if (it.length <= 6) onValueChange(it) },
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp),
-        placeholder = { Text("000000") },
+        placeholder = { Text("000000", color = if (isDarkTheme) TextDark.copy(alpha = 0.5f) else TextColor.copy(alpha = 0.5f)) },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(14.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = LightBg,
-            unfocusedContainerColor = LightBg,
+            focusedContainerColor = if (isDarkTheme) DarkSurface else LightBg,
+            unfocusedContainerColor = if (isDarkTheme) DarkSurface else LightBg,
             focusedBorderColor = Primary,
-            unfocusedBorderColor = androidx.compose.ui.graphics.Color.LightGray,
-            focusedTextColor = TextColor,
-            unfocusedTextColor = TextColor
+            unfocusedBorderColor = if (isDarkTheme) BorderDark else BorderLight,
+            focusedTextColor = if (isDarkTheme) TextDark else TextColor,
+            unfocusedTextColor = if (isDarkTheme) TextDark else TextColor
         ),
         singleLine = true
     )
@@ -284,17 +305,21 @@ fun GoogleSignInButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isDarkTheme = isSystemInDarkTheme()
     Button(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = LightBg,
-            contentColor = TextColor
+            containerColor = if (isDarkTheme) DarkSurface else androidx.compose.ui.graphics.Color(0xFFFEFEFE),
+            contentColor = if (isDarkTheme) TextDark else TextColor
         ),
-        shape = RoundedCornerShape(12.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, androidx.compose.ui.graphics.Color.LightGray)
+        shape = RoundedCornerShape(14.dp),
+        border = androidx.compose.foundation.BorderStroke(
+            width = 1.dp,
+            color = if (isDarkTheme) BorderDark else BorderLight
+        )
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -305,10 +330,15 @@ fun GoogleSignInButton(
                 text = "G",
                 fontSize = 18.sp,
                 fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-                color = TextColor
+                color = if (isDarkTheme) TextDark else TextColor
             )
             Spacer(modifier = Modifier.padding(8.dp))
-            Text("Continue with Google", fontSize = 14.sp)
+            Text(
+                "Continue with Google",
+                fontSize = 14.sp,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
+                color = if (isDarkTheme) TextDark else TextColor
+            )
         }
     }
 }
@@ -318,17 +348,21 @@ fun FacebookSignInButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isDarkTheme = isSystemInDarkTheme()
     Button(
         onClick = onClick,
         modifier = modifier
             .fillMaxWidth()
             .height(56.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = LightBg,
-            contentColor = TextColor
+            containerColor = if (isDarkTheme) DarkSurface else androidx.compose.ui.graphics.Color(0xFFFEFEFE),
+            contentColor = if (isDarkTheme) TextDark else TextColor
         ),
-        shape = RoundedCornerShape(12.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, androidx.compose.ui.graphics.Color.LightGray)
+        shape = RoundedCornerShape(14.dp),
+        border = androidx.compose.foundation.BorderStroke(
+            width = 1.dp,
+            color = if (isDarkTheme) BorderDark else BorderLight
+        )
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -339,10 +373,15 @@ fun FacebookSignInButton(
                 text = "f",
                 fontSize = 18.sp,
                 fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-                color = TextColor
+                color = if (isDarkTheme) TextDark else TextColor
             )
             Spacer(modifier = Modifier.padding(8.dp))
-            Text("Continue with Facebook", fontSize = 14.sp)
+            Text(
+                "Continue with Facebook",
+                fontSize = 14.sp,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Medium,
+                color = if (isDarkTheme) TextDark else TextColor
+            )
         }
     }
 }
@@ -352,29 +391,31 @@ fun DividerWithText(
     text: String,
     modifier: Modifier = Modifier
 ) {
+    val isDarkTheme = isSystemInDarkTheme()
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 16.dp),
+            .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         androidx.compose.material3.Divider(
             modifier = Modifier
                 .weight(1f)
                 .height(1.dp),
-            color = androidx.compose.ui.graphics.Color.LightGray
+            color = if (isDarkTheme) BorderDark else BorderLight
         )
         Text(
             text = text,
-            modifier = Modifier.padding(horizontal = 8.dp),
+            modifier = Modifier.padding(horizontal = 12.dp),
             fontSize = 12.sp,
-            color = androidx.compose.ui.graphics.Color.Gray
+            color = if (isDarkTheme) TextDark.copy(alpha = 0.5f) else TextColor.copy(alpha = 0.5f),
+            fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
         )
         androidx.compose.material3.Divider(
             modifier = Modifier
                 .weight(1f)
                 .height(1.dp),
-            color = androidx.compose.ui.graphics.Color.LightGray
+            color = if (isDarkTheme) BorderDark else BorderLight
         )
     }
 }
@@ -384,16 +425,30 @@ fun DoNotHaveAccountText(
     onSignUpClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isDarkTheme = isSystemInDarkTheme()
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 16.dp),
+            .padding(vertical = 12.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text("Don't have an account? ", fontSize = 14.sp, color = TextColor)
-        TextButton(onClick = onSignUpClick) {
-            Text("Sign up", fontSize = 14.sp, color = Primary, fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold)
+        Text(
+            "Don't have an account? ",
+            fontSize = 13.sp,
+            color = if (isDarkTheme) TextDark.copy(alpha = 0.7f) else TextColor.copy(alpha = 0.7f),
+            fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
+        )
+        TextButton(
+            onClick = onSignUpClick,
+            modifier = Modifier.padding(0.dp)
+        ) {
+            Text(
+                "Sign up",
+                fontSize = 13.sp,
+                color = Primary,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+            )
         }
     }
 }
@@ -403,16 +458,30 @@ fun AlreadyHaveAccountText(
     onSignInClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isDarkTheme = isSystemInDarkTheme()
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 16.dp),
+            .padding(vertical = 12.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text("Already have an account? ", fontSize = 14.sp, color = TextColor)
-        TextButton(onClick = onSignInClick) {
-            Text("Sign in", fontSize = 14.sp, color = Primary, fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold)
+        Text(
+            "Already have an account? ",
+            fontSize = 13.sp,
+            color = if (isDarkTheme) TextDark.copy(alpha = 0.7f) else TextColor.copy(alpha = 0.7f),
+            fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
+        )
+        TextButton(
+            onClick = onSignInClick,
+            modifier = Modifier.padding(0.dp)
+        ) {
+            Text(
+                "Sign in",
+                fontSize = 13.sp,
+                color = Primary,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+            )
         }
     }
 }
@@ -422,20 +491,27 @@ fun ErrorMessage(
     message: String,
     modifier: Modifier = Modifier
 ) {
+    val isDarkTheme = isSystemInDarkTheme()
     if (message.isNotEmpty()) {
         Box(
             modifier = modifier
                 .fillMaxWidth()
                 .background(
-                    color = androidx.compose.material3.MaterialTheme.colorScheme.error.copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(8.dp)
+                    color = if (isDarkTheme) ErrorRed.copy(alpha = 0.15f) else ErrorRed.copy(alpha = 0.1f),
+                    shape = RoundedCornerShape(12.dp)
                 )
-                .padding(12.dp)
+                .border(
+                    width = 1.dp,
+                    color = if (isDarkTheme) ErrorRed.copy(alpha = 0.5f) else ErrorRed.copy(alpha = 0.3f),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .padding(14.dp)
         ) {
             Text(
                 text = message,
-                color = androidx.compose.material3.MaterialTheme.colorScheme.error,
-                fontSize = 12.sp
+                color = if (isDarkTheme) ErrorRedDark else ErrorRed,
+                fontSize = 13.sp,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
             )
         }
     }
@@ -446,21 +522,43 @@ fun SuccessMessage(
     message: String,
     modifier: Modifier = Modifier
 ) {
+    val isDarkTheme = isSystemInDarkTheme()
     if (message.isNotEmpty()) {
         Box(
             modifier = modifier
                 .fillMaxWidth()
                 .background(
-                    color = androidx.compose.ui.graphics.Color.Green.copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(8.dp)
+                    color = if (isDarkTheme) SuccessGreen.copy(alpha = 0.15f) else SuccessGreen.copy(alpha = 0.1f),
+                    shape = RoundedCornerShape(12.dp)
                 )
-                .padding(12.dp)
+                .border(
+                    width = 1.dp,
+                    color = if (isDarkTheme) SuccessGreen.copy(alpha = 0.5f) else SuccessGreen.copy(alpha = 0.3f),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                .padding(14.dp)
         ) {
-            Text(
-                text = message,
-                color = androidx.compose.ui.graphics.Color.Green,
-                fontSize = 12.sp
-            )
+            androidx.compose.foundation.layout.Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                androidx.compose.material.icons.Icons.Default.Check.let { checkIcon ->
+                    Icon(
+                        imageVector = checkIcon,
+                        contentDescription = "Success",
+                        tint = if (isDarkTheme) SuccessGreenDark else SuccessGreen,
+                        modifier = Modifier
+                            .width(20.dp)
+                            .height(20.dp)
+                            .padding(end = 10.dp)
+                    )
+                }
+                Text(
+                    text = message,
+                    color = if (isDarkTheme) SuccessGreenDark else SuccessGreen,
+                    fontSize = 13.sp,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
+                )
+            }
         }
     }
 }

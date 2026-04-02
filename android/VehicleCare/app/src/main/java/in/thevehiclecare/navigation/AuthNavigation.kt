@@ -1,6 +1,13 @@
 package `in`.thevehiclecare.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -32,7 +39,7 @@ fun AuthNavigation(authViewModel: AuthViewModel) {
                 authViewModel = authViewModel,
                 onNavigateToLogin = {
                     navController.navigate(Screen.LoginOtp.route) {
-                        popUpTo(Screen.Register.route) { saveState = true }
+                        popUpTo(Screen.Register.route) { saveState = false }
                         launchSingleTop = true
                     }
                 },
@@ -47,7 +54,7 @@ fun AuthNavigation(authViewModel: AuthViewModel) {
                 authViewModel = authViewModel,
                 onNavigateToVerifyOtp = { phoneNumber ->
                     navController.navigate(Screen.VerifyOtp.createRoute(phoneNumber)) {
-                        popUpTo(Screen.LoginOtp.route) { saveState = true }
+                        popUpTo(Screen.LoginOtp.route) { saveState = false }
                         launchSingleTop = true
                     }
                 },
@@ -82,8 +89,16 @@ fun AuthNavigation(authViewModel: AuthViewModel) {
         }
 
         composable(Screen.Home.route) {
-            // Home screen placeholder
-            androidx.compose.material3.Text("Welcome to Home!")
+            Scaffold { paddingValues ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("Welcome to Home!")
+                }
+            }
         }
     }
 }
